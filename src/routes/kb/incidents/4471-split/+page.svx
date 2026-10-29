@@ -4,7 +4,7 @@ title: '#4471 · three problems, not one'
 owner: kbagi
 status: open
 reviewed: 2026-10-30
-signature: kbagi
+signature: v1.eyJzdWIiOiI0MjkiLCJhdWQiOiJjaGFsbGVuZ2U6d2hhdC1pdC1zaG93cyIsImlhdCI6MTc5MzMxNjA0OSwiZXhwIjoxNzkzNDAyNDQ5fQ.sDVC2G2gkS-OjNZO1Ss3EHtjmk5rCO6Kpve8XrHQ4mM
 ---
 
 <script>
