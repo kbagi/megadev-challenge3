@@ -1,0 +1,66 @@
+---
+layout: runbook
+title: '#4471 · three problems, not one'
+owner: kbagi
+status: open
+reviewed: 2026-10-30
+signature: kbagi
+---
+
+<script>
+  import SplitTable from '#lib/kb/SplitTable.svelte';
+  import ShiftReports from '#lib/kb/ShiftReports.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+
+  const issues = {
+    parser: 'https://github.com/kbagi/megadev-challenge3/issues/1',
+    hint: 'https://github.com/kbagi/megadev-challenge3/issues/2',
+    shift: 'https://github.com/kbagi/megadev-challenge3/issues/3',
+  };
+</script>
+
+[#4471](/kb/incidents/4471) says one issue, one fix queued. The reports say three. They were merged
+on subject line ([decision 0001](/kb/decisions/0001-dedupe-by-subject)), and the subjects all say
+"wrong day". What went wrong is in the body, the tenant and the way the report came in.
+
+<Callout kind="warn">
+The queued parser fix closes one of the three. The other two keep coming in after it ships.
+</Callout>
+
+## What is in #4471
+
+<SplitTable ticket={4471} {issues} />
+
+## parser: the shared parser reads month first
+
+Every tenant on file writes the day first. The shared parser reads month first, so 12/05 becomes
+5 December. Reports come in by app, email and the booking-v2 form, from all tenants. This is the
+bug #4471 describes, and the fix that is queued.
+
+## hint: booking-v3 tells people to type month first
+
+booking-v3 prints `MM/DD/YYYY` under its date field and then reads the date the tenant's way, day
+first. People type what the hint says and get a swapped date. Only reports sent through the form, and
+only from tenants on booking-v3. The parser fix does not touch it: the form has to print the
+tenant's own order.
+
+Intake tags disagree with this split in both directions; count by tenant and channel, not by
+`intakeTag`.
+
+## shift: dates move by one day
+
+These are the reports the desk itself read as a one-day move. A day/month swap cannot do that:
+12 May flips to 5 December, never to 11 May. The same meeting shows on different days in Lisbon and
+Toronto. This points at time zones (a date stored as midnight in one zone and shown in another),
+not at date order.
+
+<ShiftReports />
+
+## What changes on the desk
+
+- Close #4471 for `parser` only when the parser fix ships; `hint` and `shift` stay open on their own tickets.
+- Merging on subject alone put three problems under one ticket. Before merging a date report,
+  check the tenant's form and channel, and whether the date flipped or moved by a day.
+
+<RenderStamp {signature} />

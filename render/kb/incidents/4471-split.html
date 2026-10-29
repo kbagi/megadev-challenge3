@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="../../_app/immutable/entry/start.DHGSJWrH.js" rel="modulepreload">
+		<link href="../../_app/immutable/entry/payload.DSmR2FwN.js" rel="modulepreload">
+		<link href="../../_app/immutable/chunks/CRzLMJPS.js" rel="modulepreload">
+		<link href="../../_app/immutable/chunks/CiqoZ2A1.js" rel="modulepreload">
+		<link href="../../_app/immutable/chunks/CHfFqfNT.js" rel="modulepreload">
+		<link href="../../_app/immutable/chunks/DQG8lHS1.js" rel="modulepreload">
+		<link href="../../_app/immutable/entry/app.Z02H17ih.js" rel="modulepreload">
+		<link href="../../_app/immutable/nodes/0.Izv2btRW.js" rel="modulepreload">
+		<link href="../../_app/immutable/chunks/DK3Fl9T5.js" rel="modulepreload">
+		<link href="../../_app/immutable/nodes/5.BPaYZojs.js" rel="modulepreload">
+		<link href="../../_app/immutable/chunks/CwHFdeOX.js" rel="modulepreload">
+		<link href="../../_app/immutable/chunks/DkoUumqI.js" rel="modulepreload">
+		<link href="../../_app/immutable/chunks/CVBzP17p.js" rel="modulepreload">
+		<link href="../../_app/immutable/chunks/DcZ9TEUN.js" rel="modulepreload">
+		<!--e2jw2j--><!----><title>#4471 · three problems, not one · support kb</title>
+		<link href="../../_app/immutable/assets/runbook.COyw0cbZ.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/Callout.AbLv9dM_.css" rel="stylesheet">
+		<link href="../../_app/immutable/assets/_page.Cw9C7hOS.css" rel="stylesheet">
+  </head>
+  <body>
+    <div style="display: contents"><!--[--><!--[--><!--[0--><!--[--><!--[--><!--[-1--><!--[--><div class="kb svelte-e2jw2j"><header><a class="crumb svelte-e2jw2j" href="/kb">support desk · kb</a> <h1 class="svelte-e2jw2j">#4471 · three problems, not one</h1> <p class="meta svelte-e2jw2j"><span>owner <b>kbagi</b></span> <span class="status open svelte-e2jw2j">open</span> <span class="svelte-e2jw2j">reviewed 2026-10-30 · -1 days ago</span></p></header> <!--[-1--><!--]--> <main><p><a href="/kb/incidents/4471">#4471</a> says one issue, one fix queued. The reports say three. They were merged
+on subject line (<a href="/kb/decisions/0001-dedupe-by-subject">decision 0001</a>), and the subjects all say
+“wrong day”. What went wrong is in the body, the tenant and the way the report came in.</p> <aside class="warn svelte-17bri61"><!---->The queued parser fix closes one of the three. The other two keep coming in after it ships.<!----></aside><!----> <h2>What is in #4471</h2> <p class="sum svelte-xskqqx"><strong>412</strong> reports merged into #4471 · <strong>3</strong> problems <span class="dup svelte-xskqqx">(427 rows in the export, 15 of them repeated ids)</span></p> <table><thead><tr><th>problem</th><th>reports</th><th>what people saw</th><th>channels</th><th>tenants</th><th>seen</th><th>ticket</th></tr></thead><tbody><!--[--><tr><td><code>parser</code></td><td>374</td><td>day and month swapped (12/05 read as 5 December)</td><td class="muted svelte-xskqqx">app ×202 · email ×147 · form ×25</td><td class="muted svelte-xskqqx">11</td><td class="muted svelte-xskqqx">2026-04-01 → 2026-10-04</td><td><!--[0--><a href="https://github.com/kbagi/megadev-challenge3/issues/1">#1</a><!--]--></td></tr><tr><td><code>hint</code></td><td>33</td><td>day and month swapped, typed month first because the form told them to</td><td class="muted svelte-xskqqx">form ×33</td><td class="muted svelte-xskqqx">3</td><td class="muted svelte-xskqqx">2026-04-17 → 2026-09-22</td><td><!--[0--><a href="https://github.com/kbagi/megadev-challenge3/issues/2">#2</a><!--]--></td></tr><tr><td><code>shift</code></td><td>5</td><td>one day early, or a different day per time zone</td><td class="muted svelte-xskqqx">email ×3 · app ×2</td><td class="muted svelte-xskqqx">5</td><td class="muted svelte-xskqqx">2026-04-02 → 2026-10-04</td><td><!--[0--><a href="https://github.com/kbagi/megadev-challenge3/issues/3">#3</a><!--]--></td></tr><!--]--></tbody></table><!----> <h2>parser: the shared parser reads month first</h2> <p>Every tenant on file writes the day first. The shared parser reads month first, so 12/05 becomes
+5 December. Reports come in by app, email and the booking-v2 form, from all tenants. This is the
+bug #4471 describes, and the fix that is queued.</p> <h2>hint: booking-v3 tells people to type month first</h2> <p>booking-v3 prints <code>MM/DD/YYYY</code> under its date field and then reads the date the tenant’s way, day
+first. People type what the hint says and get a swapped date. Only reports sent through the form, and
+only from tenants on booking-v3. The parser fix does not touch it: the form has to print the
+tenant’s own order.</p> <p>Intake tags disagree with this split in both directions; count by tenant and channel, not by <code>intakeTag</code>.</p> <h2>shift: dates move by one day</h2> <p>These are the reports the desk itself read as a one-day move. A day/month swap cannot do that:
+12 May flips to 5 December, never to 11 May. The same meeting shows on different days in Lisbon and
+Toronto. This points at time zones (a date stored as midnight in one zone and shown in another),
+not at date order.</p> <table><thead><tr><th>report</th><th>tenant</th><th>received</th><th>what they wrote</th></tr></thead><tbody><!--[--><tr><td><code>R-41202</code></td><td>kettle.books <span class="muted svelte-1p6m4zg">nl-NL</span></td><td class="muted svelte-1p6m4zg">2026-04-02</td><td>Invite says Tuesday 12 May. Calendar says Monday 11 May. My client turned up on the Monday. We had coffee.</td></tr><tr><td><code>R-41209</code></td><td>alder.physio <span class="muted svelte-1p6m4zg">de-DE</span></td><td class="muted svelte-1p6m4zg">2026-04-06</td><td>Every booking in June is one day off. Only June. Why only June.</td></tr><tr><td><code>R-41236</code></td><td>nine.lanterns <span class="muted svelte-1p6m4zg">pl-PL</span></td><td class="muted svelte-1p6m4zg">2026-04-20</td><td>The invite arrived before I made the booking. I would like to know how.</td></tr><tr><td><code>R-41344</code></td><td>pale.harbour <span class="muted svelte-1p6m4zg">pt-PT</span></td><td class="muted svelte-1p6m4zg">2026-06-12</td><td>Client in Lisbon got Tuesday. Client in Toronto got Monday. Same meeting. We held it twice.</td></tr><tr><td><code>R-41620</code></td><td>lantern.row <span class="muted svelte-1p6m4zg">cs-CZ</span></td><td class="muted svelte-1p6m4zg">2026-10-04</td><td>Tuesday 6 October showed as Monday. I moved it myself. I have stopped reporting these but my colleague says it helps you.</td></tr><!--]--></tbody></table><!----> <h2>What changes on the desk</h2> <ul><li>Close #4471 for <code>parser</code> only when the parser fix ships; <code>hint</code> and <code>shift</code> stay open on their own tickets.</li> <li>Merging on subject alone put three problems under one ticket. Before merging a date report,
+check the tenant’s form and channel, and whether the date flipped or moved by a day.</li></ul> <!--[0--><p class="stamp svelte-1280m42">desk ref <b class="svelte-1280m42">DR-5EC6-1HXB</b></p><!--]--><!----><!----></main> <footer class="svelte-e2jw2j">Pages are written by people. Tables and charts are built from data at render time.</footer></div><!--]--><!--]--><!--]--><!----><!--]--><!--]--><!--]--><!----> <!--[-1--><!--]--><!--]-->
+			
+			<script>
+				{
+					__sveltekit_1d4r33p = {
+						base: new URL("../..", location).pathname.slice(0, -1),
+						version: "1793315785320"
+					};
+
+					const element = document.currentScript.parentElement;
+
+					import("../../_app/immutable/entry/start.DHGSJWrH.js").then(async (kit) => {
+						kit.init(__sveltekit_1d4r33p);
+						const app = await import("../../_app/immutable/entry/app.Z02H17ih.js");
+						kit.start(app, element, {
+							node_ids: [0, 5],
+							data: [null,null],
+							form: null,
+							error: null
+						});
+					});
+				}
+			</script>
+		</div>
+  </body>
+</html>
